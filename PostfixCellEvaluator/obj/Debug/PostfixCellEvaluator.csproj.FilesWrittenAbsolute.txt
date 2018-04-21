@@ -1,0 +1,5 @@
+/Users/lugehorsam/RiderProjects/PostfixCellEvaluator/PostfixCellEvaluator/obj/Debug/.NETFramework,Version=v4.7.1.AssemblyAttribute.cs
+/Users/lugehorsam/RiderProjects/PostfixCellEvaluator/PostfixCellEvaluator/bin/Debug/PostfixCellEvaluator.pdb
+/Users/lugehorsam/RiderProjects/PostfixCellEvaluator/PostfixCellEvaluator/bin/Debug/PostfixCellEvaluator.exe
+/Users/lugehorsam/RiderProjects/PostfixCellEvaluator/PostfixCellEvaluator/obj/Debug/PostfixCellEvaluator.exe
+/Users/lugehorsam/RiderProjects/PostfixCellEvaluator/PostfixCellEvaluator/obj/Debug/PostfixCellEvaluator.pdb
