@@ -26,3 +26,6 @@ The core parsing algorithm can be found in `PostfixCell.Evaluate()`
 
 Future work on this method should ensure that it is readable and clearly separated
 into discrete token operations (e.g., resolving cell links, handling operands, handling operators.)
+
+Additionally, under less time constraints, look into breaking up its implementation
+into smaller methods. Also audit a couple other methods for readability and size.
