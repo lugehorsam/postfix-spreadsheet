@@ -5,7 +5,8 @@
     using System.Text.RegularExpressions;
 
     /// <summary>
-    ///     Represents a cell in the spreadsheet. Tokens contain either an operator or an operand in Postfix Notation, or a link to another cell.
+    ///     Represents a cell in the spreadsheet. Tokens contain either an operator or an operand in Postfix Notation, or a
+    ///     link to another cell.
     /// </summary>
     internal class PostfixCell
     {
@@ -15,13 +16,13 @@
         private const char _IDEAL_TOKEN_WHITESPACING = ' ';
 
         /// <summary>
-        /// What to render in the event of unexpected output.
+        ///     What to render in the event of unexpected output.
         /// </summary>
         private const string _ERR_STRING = "#ERR";
 
         /// <summary>
-        /// The maximum number of decimal places to render to the user.
-        /// Does not impact fidelity of calculations.
+        ///     The maximum number of decimal places to render to the user.
+        ///     Does not impact fidelity of calculations.
         /// </summary>
         private const int _MAX_DECIMAL_PLACES = 3;
 
@@ -37,32 +38,33 @@
         /// </summary>
         public string Render(PostfixCell[,] allCells)
         {
-            float? evaluatedResult = Evaluate(allCells);            
+            float? evaluatedResult = Evaluate(allCells);
             return evaluatedResult.HasValue ? SanitizeOutputForRendering(evaluatedResult.Value) : _ERR_STRING;
         }
 
         /// <summary>
-        ///     Links cells and evaluates tokens according to Postfix Notation. Returns null if this cell or a linked cell was malformed.
+        ///     Links cells and evaluates tokens according to Postfix Notation. Returns null if this cell or a linked cell was
+        ///     malformed.
         /// </summary>
         private float? Evaluate(PostfixCell[,] allCells)
         {
             string[] cellTokens = CreateCellTokens(_tokens);
-                       
+
             if (cellTokens.Length == 0)
             {
                 return 0; //just render an empty cell as a zero.
             }
-          
+
             var currentTokens = new Stack<float>();
-            
+
             foreach (string token in cellTokens)
             {
                 float operand;
 
                 if (float.TryParse(token, out operand))
                 {
-                    currentTokens.Push(operand);                    
-                }                
+                    currentTokens.Push(operand);
+                }
                 else if (IsCellLink(token))
                 {
                     float? linkedValue = EvaluateCellLink(allCells, token);
@@ -75,7 +77,7 @@
                     {
                         return null;
                     }
-                } 
+                }
                 else if (PostfixUtility.IsValidOperator(token))
                 {
                     if (currentTokens.Count >= 2)
@@ -95,20 +97,20 @@
             {
                 return null;
             }
-            
+
             return currentTokens.Pop();
         }
-                
+
         /// <summary>
-        /// Returns the value of the cell linked from this token.
-        /// Returns null if the link could not be found or was circular.
+        ///     Returns the value of the cell linked from this token.
+        ///     Returns null if the link could not be found or was circular.
         /// </summary>
         private float? EvaluateCellLink(PostfixCell[,] allCells, string currLink)
         {
             PostfixCell linkedCell = GetLinkedPostfixCell(allCells, currLink);
 
             //Avoid an infinite loop of cells referencing one another.
-            if (linkedCell == null || linkedCell.LinksToCell(this, allCells))
+            if ((linkedCell == null) || linkedCell.LinksToCell(this, allCells))
             {
                 return null;
             }
@@ -166,7 +168,7 @@
 
             return -1;
         }
-        
+
         /// <summary>
         ///     Does this cell have a token that points to the specifically provided cell?
         ///     Uses the array as a basis for determining this.
@@ -183,8 +185,8 @@
                 }
 
                 PostfixCell linkedCell = GetLinkedPostfixCell(allCells, cellElement);
-    
-                if (linkedCell != null && linkedCell == otherCell)
+
+                if ((linkedCell != null) && (linkedCell == otherCell))
                 {
                     return true;
                 }
@@ -202,12 +204,12 @@
         {
             int column = GetColumnIndexFromLetter(cellLink[0]);
             int row = GetRowIndex(cellLink.Substring(1));
-            
+
             int numRows = allCells.GetLength(0);
             int numCols = allCells.GetLength(1);
 
             bool linkedCellOutOfRange = (row >= numRows) || (column >= numCols);
-            
+
             return linkedCellOutOfRange ? null : allCells[row, column];
         }
 
@@ -221,11 +223,11 @@
         }
 
         /// <summary>
-        /// Rounds the value to render to the <see cref="_MAX_DECIMAL_PLACES"/>.
+        ///     Rounds the value to render to the <see cref="_MAX_DECIMAL_PLACES" />.
         /// </summary>
         private static string SanitizeOutputForRendering(float cellOutput)
         {
-            float roundedOutput = (float) Math.Round(cellOutput, _MAX_DECIMAL_PLACES);
+            var roundedOutput = (float) Math.Round(cellOutput, _MAX_DECIMAL_PLACES);
             return roundedOutput.ToString();
         }
     }

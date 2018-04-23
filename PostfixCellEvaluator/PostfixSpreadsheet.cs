@@ -16,7 +16,7 @@
         }
 
         /// <summary>
-        /// Returns a string in CSV format containing the evaluated contents of the input file.
+        ///     Returns a string in CSV format containing the evaluated contents of the input file.
         /// </summary>
         public string Render()
         {
@@ -34,7 +34,7 @@
                 for (var columnIndex = 0; columnIndex < numCols; columnIndex++)
                 {
                     string renderedCell = postfixCells[rowIndex, columnIndex].Render(postfixCells);
-                    
+
                     fullString += renderedCell;
 
                     if (columnIndex != numCols - 1)
@@ -50,7 +50,8 @@
         }
 
         /// <summary>
-        ///     Given a CSV string, returns a two dimensional array of strings, where each cell was separated by a comma in the source string.
+        ///     Given a CSV string, returns a two dimensional array of strings, where each cell was separated by a comma in the
+        ///     source string.
         /// </summary>
         private string[,] GetCSVCells(string csvFileContent)
         {
@@ -60,14 +61,14 @@
             }
 
             string[] csvRows = csvFileContent.Split('\n');
-            
+
             int maxNumColumns = csvRows.Max(row => row.Split(',').Length);
             return CreateCellGrid(csvRows, maxNumColumns);
         }
 
         /// <summary>
         ///     Given rows of raw CSV strings and the width of the CSV grid, returns each individually parsed cell.
-        ///     If any rows have columns that fall short of the <see cref="maxNumColumns"/> assigns an empty string
+        ///     If any rows have columns that fall short of the <see cref="maxNumColumns" /> assigns an empty string
         ///     to the remaining undefined cells.
         /// </summary>
         private string[,] CreateCellGrid(string[] csvRows, int maxNumColumns)
@@ -102,7 +103,7 @@
         {
             int numRows = csvCells.GetLength(0);
             int numCols = csvCells.GetLength(1);
-        
+
             var postfixCells = new PostfixCell[numRows, numCols];
 
             for (var rowIndex = 0; rowIndex < numRows; rowIndex++)

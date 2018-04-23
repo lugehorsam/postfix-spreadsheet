@@ -3,7 +3,7 @@
     using System;
 
     /// <summary>
-    ///    Utility for evaluating Reverse Polish Notation.
+    ///     Utility for evaluating Reverse Polish Notation.
     /// </summary>
     internal static class PostfixUtility
     {
@@ -11,6 +11,7 @@
         ///     Operators recognized by this postfix expression.
         /// </summary>
         private const string _PLUS_OPERATOR = "+";
+
         private const string _MINUS_OPPERATOR = "-";
         private const string _DIVISION_OPERATOR = "/";
         private const string _MULTIPLICATION_OPERATOR = "*";
