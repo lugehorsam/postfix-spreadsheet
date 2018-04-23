@@ -2,44 +2,29 @@
 {
     using System;
     using System.Text.RegularExpressions;
-    
+
     /// <summary>
-    /// Represents a pointer from one <see cref="PostfixCell"/> cell to another.
-    /// The token it is constructed from must be a single letter succeeded by a number of arbitrary size.
+    ///     Represents a pointer from one <see cref="PostfixCell" /> cell to another.
+    ///     The token it is constructed from must be a single letter succeeded by a number of arbitrary size.
     /// </summary>
     internal class PostfixCellPointer
     {
         /// <summary>
-        /// The row of the cell this pointer is located in.
-        /// </summary>
-        private readonly int _row;
-        
-        /// <summary>
-        /// The column of the cell this pointer is located in.
+        ///     The column of the cell this pointer is located in.
         /// </summary>
         private readonly int _column;
-        
-        private readonly int _pointedRow;        
+
         private readonly int _pointedColumn;
 
-        /// <summary>
-        /// The row being pointed to.
-        /// </summary>
-        public int PointedRow
-        {
-            get { return _pointedRow; }
-        }
+        private readonly int _pointedRow;
 
         /// <summary>
-        /// The column being pointed to.
+        ///     The row of the cell this pointer is located in.
         /// </summary>
-        public int PointedColumn
-        {
-            get { return _pointedColumn; }
-        }
+        private readonly int _row;
 
         /// <summary>
-        /// Constructs a pointer from a token. Expects the token to have been validated by <see cref="IsCellPointer"/>.
+        ///     Constructs a pointer from a token. Expects the token to have been validated by <see cref="IsCellPointer" />.
         /// </summary>
         public PostfixCellPointer(int ownerRow, int ownerColumn, string cellToken)
         {
@@ -50,27 +35,43 @@
 
             _row = ownerRow;
             _column = ownerColumn;
-            
+
             _pointedRow = GetRowFromToken(cellToken.Substring(1));
             _pointedColumn = GetColumnFromToken(cellToken[0]);
-        }      
-        
+        }
+
+        /// <summary>
+        ///     The row being pointed to.
+        /// </summary>
+        public int PointedRow
+        {
+            get { return _pointedRow; }
+        }
+
+        /// <summary>
+        ///     The column being pointed to.
+        /// </summary>
+        public int PointedColumn
+        {
+            get { return _pointedColumn; }
+        }
+
         /// <summary>
         ///     Returns the value of the cell this points to.
         ///     Returns null if the cell could not be found or was circular.
         /// </summary>
-        public float? GetValue(PostfixCell[,] allCells, string currLink)
+        public float? GetValue(PostfixCell[,] allCells, string linkToken)
         {
-            PostfixCell linkedCell = GetCellPointedTo(allCells, currLink);
+            PostfixCell linkedCell = GetCellPointedTo(allCells, linkToken);
 
             if (linkedCell == null)
             {
                 return null;
             }
-            
-            bool thisPointsToSelf = linkedCell.Row == _pointedRow && linkedCell.Column == _pointedColumn;
+
+            bool thisPointsToSelf = (linkedCell.Row == _row) && (linkedCell.Column == _column);
             bool otherPointsToThis = linkedCell.ContainsPointerTo(_row, _column);
-            
+
             //Avoid infinite loops
             if (otherPointsToThis || thisPointsToSelf)
             {
@@ -79,7 +80,7 @@
 
             return linkedCell.Evaluate(allCells);
         }
-        
+
         /// <summary>
         ///     Does the provided token attempt to represent a pointer to another cell?
         /// </summary>
@@ -95,7 +96,7 @@
             MatchCollection letterMatches = Regex.Matches(firstChar, @"[a-zA-Z]");
             return letterMatches.Count > 0;
         }
-        
+
         /// <summary>
         ///     Returns the cell pointed to by this cell. Input must be a syntactically valid cell link.
         ///     If the cell link points to a nonexistant cell, returns null.
@@ -109,7 +110,7 @@
 
             return linkedCellOutOfRange ? null : allCells[_pointedRow, _pointedColumn];
         }
-        
+
         /// <summary>
         ///     Given a letter, returns an integer representing the index of the letter in the alphabet.
         ///     Case insensitive. Zero-based.
@@ -118,7 +119,7 @@
         {
             return char.ToUpper(letter) - 65;
         }
-        
+
         /// <summary>
         ///     Determines the row being pointed to by the provided token.
         /// </summary>

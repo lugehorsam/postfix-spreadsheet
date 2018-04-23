@@ -27,10 +27,18 @@
         /// </summary>
         private const int _MAX_DECIMAL_PLACES = 3;
 
-        private readonly string _tokens;
+        private readonly int _column;
 
         private readonly int _row;
-        private readonly int _column;
+
+        private readonly string _tokens;
+
+        public PostfixCell(int row, int column, string tokens)
+        {
+            _row = row;
+            _column = column;
+            _tokens = tokens;
+        }
 
         public int Row
         {
@@ -40,13 +48,6 @@
         public int Column
         {
             get { return _column; }
-        }
-
-        public PostfixCell(int row, int column, string tokens)
-        {
-            _row = row;
-            _column = column;
-            _tokens = tokens;
         }
 
         /// <summary>
@@ -81,33 +82,9 @@
                 {
                     operandStack.Push(operand);
                 }
-                else if (PostfixCellPointer.IsCellPointer(token))
+                else if (!TryPushCellPointerToStack(token, operandStack, allCells) && !TryPushOperatorToStack(token, operandStack))
                 {
-                    var cellPointer = new PostfixCellPointer(_row, _column, token);
-                    
-                    float? linkedValue = cellPointer.GetValue(allCells, token);
-
-                    if (linkedValue.HasValue)
-                    {
-                        operandStack.Push(linkedValue.Value);
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                else if (PostfixUtility.IsValidOperator(token))
-                {
-                    if (operandStack.Count >= 2)
-                    {
-                        float rightOperand = operandStack.Pop();
-                        float leftOperand = operandStack.Pop();
-                        operandStack.Push(PostfixUtility.Evaluate(leftOperand, rightOperand, token));
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    return null;
                 }
             }
 
@@ -120,12 +97,50 @@
         }
 
         /// <summary>
-        /// Does this cell contain tokens that point to the provided row and column?
+        ///     Does this cell contain tokens that point to the provided row and column?
         /// </summary>
         public bool ContainsPointerTo(int row, int column)
         {
             string[] tokens = CreateCellTokens(_tokens);
             return tokens.Any(token => IsTokenPointerTo(token, row, column));
+        }
+
+        /// <summary>
+        ///     Tries to push an operator to the stack of operands.
+        ///     Returns true if the token was recognized as an operator and pushed to the stack.
+        ///     Else, returns false.
+        /// </summary>
+        private bool TryPushOperatorToStack(string token, Stack<float> operandStack)
+        {
+            if (PostfixUtility.IsValidOperator(token))
+            {
+                if (operandStack.Count >= 2)
+                {
+                    float rightOperand = operandStack.Pop();
+                    float leftOperand = operandStack.Pop();
+                    operandStack.Push(PostfixUtility.Evaluate(leftOperand, rightOperand, token));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool TryPushCellPointerToStack(string token, Stack<float> operandStack, PostfixCell[,] allCells)
+        {
+            if (PostfixCellPointer.IsCellPointer(token))
+            {
+                var cellPointer = new PostfixCellPointer(_row, _column, token);
+
+                float? linkedValue = cellPointer.GetValue(allCells, token);
+                if (linkedValue.HasValue)
+                {
+                    operandStack.Push(linkedValue.Value);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private bool IsTokenPointerTo(string token, int row, int column)
@@ -134,10 +149,10 @@
             {
                 return false;
             }
-                
+
             var pointer = new PostfixCellPointer(_row, _column, token);
 
-            return pointer.PointedRow == row && pointer.PointedColumn == column;
+            return (pointer.PointedRow == row) && (pointer.PointedColumn == column);
         }
 
         /// <summary>
