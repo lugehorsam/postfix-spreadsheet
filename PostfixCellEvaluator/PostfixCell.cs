@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text.RegularExpressions;
 
     /// <summary>
@@ -113,24 +114,20 @@
         /// </summary>
         public bool ContainsPointerTo(int row, int column)
         {
-            string[] cellElements = CreateCellTokens(_tokens);
+            string[] tokens = CreateCellTokens(_tokens);
+            return tokens.Any(token => IsTokenPointerTo(token, row, column));
+        }
 
-            foreach (string cellElement in cellElements)
+        private bool IsTokenPointerTo(string token, int row, int column)
+        {
+            if (!PostfixCellPointer.IsCellPointer(token))
             {
-                if (!PostfixCellPointer.IsCellPointer(cellElement))
-                {
-                    continue;
-                }
-                
-                var pointer = new PostfixCellPointer(_row, _column, cellElement);
-
-                if (pointer.PointedRow == row && pointer.PointedColumn == column)
-                {
-                    return true;
-                }
+                return false;
             }
+                
+            var pointer = new PostfixCellPointer(_row, _column, token);
 
-            return false;
+            return pointer.PointedRow == row && pointer.PointedColumn == column;
         }
 
         /// <summary>
