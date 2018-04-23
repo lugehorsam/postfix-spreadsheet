@@ -27,7 +27,7 @@
         }
 
         /// <summary>
-        /// Ensures that the user arguments are not erroneus.
+        /// Ensures that the user arguments are not erroneus and point to the correct resources.
         /// </summary>
         private static bool Validate(string[] userArgs)
         {
@@ -35,7 +35,7 @@
         }
 
         /// <summary>
-        ///     Did the user provide the valid arguments via the command line?
+        ///     Did the user provide the right number and format of arguments via the command line?
         /// </summary>
         private static bool ValidateArguments(string[] userArgs)
         {

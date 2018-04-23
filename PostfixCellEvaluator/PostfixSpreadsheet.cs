@@ -96,8 +96,7 @@
         }
 
         /// <summary>
-        ///     Given a multidimensional array of strings, creates a list of <see cref="PostfixCell" /> identified by
-        ///     row and column.
+        ///     Given a multidimensional array of strings, creates a multidimensional array of <see cref="PostfixCell" />.
         /// </summary>
         private static PostfixCell[,] GetPostfixCells(string[,] csvCells)
         {

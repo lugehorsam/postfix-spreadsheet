@@ -3,7 +3,7 @@
     using System;
 
     /// <summary>
-    ///    Evaluates Reverse Polish Notation.
+    ///    Utility for evaluating Reverse Polish Notation.
     /// </summary>
     internal static class PostfixUtility
     {

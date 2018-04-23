@@ -5,17 +5,24 @@
     using System.Text.RegularExpressions;
 
     /// <summary>
-    ///     Represents a cell in the spreadsheet. Tokens contain either a <see cref="PostfixUtility" /> or a link to another cell.
+    ///     Represents a cell in the spreadsheet. Tokens contain either an operator or an operand in Postfix Notation, or a link to another cell.
     /// </summary>
     internal class PostfixCell
     {
         /// <summary>
-        ///     The ideal amount of whitespace between raw cell elements.
+        ///     The ideal amount of whitespace between raw cell tokens.
         /// </summary>
         private const char _IDEAL_TOKEN_WHITESPACING = ' ';
 
+        /// <summary>
+        /// What to render in the event of unexpected output.
+        /// </summary>
         private const string _ERR_STRING = "#ERR";
 
+        /// <summary>
+        /// The maximum number of decimal places to render to the user.
+        /// Does not impact fidelity of calculations.
+        /// </summary>
         private const int _MAX_DECIMAL_PLACES = 3;
 
         private readonly string _tokens;
@@ -35,7 +42,7 @@
         }
 
         /// <summary>
-        ///     Links cells and evaluates content according to Postfix Notation. Returns null if this cell or a linked cell was malformed.
+        ///     Links cells and evaluates tokens according to Postfix Notation. Returns null if this cell or a linked cell was malformed.
         /// </summary>
         private float? Evaluate(PostfixCell[,] allCells)
         {
@@ -119,7 +126,6 @@
             return rawContent.Split(new[] {_IDEAL_TOKEN_WHITESPACING}, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        /// 
         /// <summary>
         ///     Given a letter, returns an integer representing the index of the letter in the alphabet. Case insensitive.
         ///     Zero-based.
@@ -130,7 +136,7 @@
         }
 
         /// <summary>
-        ///     Does this string attempt to represent a pointer to another cell?
+        ///     Does the provided token attempt to represent a pointer to another cell?
         /// </summary>
         private static bool IsCellLink(string cellToken)
         {
@@ -146,7 +152,8 @@
         }
 
         /// <summary>
-        ///     Determines the row of this cell from its raw string. Zero-based.
+        ///     Determines the row being pointed to by the provided token.
+        ///     Token is expected to be prevalidated as a numeric cell pointer.
         /// </summary>
         private static int GetRowIndex(string cellToken)
         {
@@ -161,7 +168,8 @@
         }
         
         /// <summary>
-        ///     Does this cell have an element that links to the provided cell?
+        ///     Does this cell have a token that points to the specifically provided cell?
+        ///     Uses the array as a basis for determining this.
         /// </summary>
         private bool LinksToCell(PostfixCell otherCell, PostfixCell[,] allCells)
         {
@@ -186,6 +194,7 @@
         }
 
         /// <summary>
+        ///     Returns the cell pointed to by this cell.
         ///     Input must be a syntactically valid cell link, i.e., a single letter succeeded by a number of arbitrary size.
         ///     If the cell link points to a nonexistant cell, returns null.
         /// </summary>
