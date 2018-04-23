@@ -43,7 +43,10 @@
                     }
                 }
 
-                fullString += Environment.NewLine;
+                if (rowIndex != numRows - 1)
+                {
+                    fullString += Environment.NewLine;
+                }
             }
 
             return fullString;
