@@ -1,4 +1,4 @@
-A Reverse Polish Notation evaluator with cell and letter number notation support.
+## A Reverse Polish Notation evaluator with cell and letter number notation support.
 
 ### Running the Application
 
@@ -19,3 +19,10 @@ From within `PostfixCellEvaluator/Test/`, run the following:
 `run-tests.sh`
 
 Ensure that all tests pass. Follow the format outlined in that script to add more tests.
+
+### Implementation Note
+
+The core parsing algorithm can be found in `PostfixCell.Evaluate()`
+
+Future work on this method should ensure that it is readable and clearly separated
+into discrete token operations (e.g., resolving cell links, handling operands, handling operators.)
