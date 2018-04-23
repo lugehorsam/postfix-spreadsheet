@@ -84,13 +84,13 @@
                 }
                 else if (!TryPushCellPointerToStack(token, operandStack, allCells) && !TryPushOperatorToStack(token, operandStack))
                 {
-                    return null;
+                    return null; // unrecognized token
                 }
             }
 
             if (operandStack.Count != 1)
             {
-                return null;
+                return null; // something went wrong during evaluation
             }
 
             return operandStack.Pop();
