@@ -14,7 +14,7 @@ You should see the appropriate output printed in your console.
 
 ### Testing
 
-From within `PostfixCellEvaluator/Test/`, run the following:
+From within `PostfixCellEvaluator/Tests/`, run the following:
 
 `./run-tests.sh`
 
