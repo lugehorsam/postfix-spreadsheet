@@ -71,7 +71,7 @@
                 return 0; //just render an empty cell as a zero.
             }
 
-            var currentTokens = new Stack<float>();
+            var operandStack = new Stack<float>();
 
             foreach (string token in cellTokens)
             {
@@ -79,7 +79,7 @@
 
                 if (float.TryParse(token, out operand))
                 {
-                    currentTokens.Push(operand);
+                    operandStack.Push(operand);
                 }
                 else if (PostfixCellPointer.IsCellPointer(token))
                 {
@@ -89,7 +89,7 @@
 
                     if (linkedValue.HasValue)
                     {
-                        currentTokens.Push(linkedValue.Value);
+                        operandStack.Push(linkedValue.Value);
                     }
                     else
                     {
@@ -98,11 +98,11 @@
                 }
                 else if (PostfixUtility.IsValidOperator(token))
                 {
-                    if (currentTokens.Count >= 2)
+                    if (operandStack.Count >= 2)
                     {
-                        float rightOperand = currentTokens.Pop();
-                        float leftOperand = currentTokens.Pop();
-                        currentTokens.Push(PostfixUtility.Evaluate(leftOperand, rightOperand, token));
+                        float rightOperand = operandStack.Pop();
+                        float leftOperand = operandStack.Pop();
+                        operandStack.Push(PostfixUtility.Evaluate(leftOperand, rightOperand, token));
                     }
                     else
                     {
@@ -111,12 +111,12 @@
                 }
             }
 
-            if (currentTokens.Count != 1)
+            if (operandStack.Count != 1)
             {
                 return null;
             }
 
-            return currentTokens.Pop();
+            return operandStack.Pop();
         }
 
         /// <summary>
