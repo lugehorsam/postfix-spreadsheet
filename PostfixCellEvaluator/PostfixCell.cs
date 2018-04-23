@@ -28,8 +28,13 @@
 
         private readonly string _tokens;
 
-        public PostfixCell(string tokens)
+        private readonly int _row;
+        private readonly int _column;
+
+        public PostfixCell(int row, int column, string tokens)
         {
+            _row = row;
+            _column = column;
             _tokens = tokens;
         }
 
@@ -46,7 +51,7 @@
         ///     Links cells and evaluates tokens according to Postfix Notation. Returns null if this cell or a linked cell was
         ///     malformed.
         /// </summary>
-        private float? Evaluate(PostfixCell[,] allCells)
+        public float? Evaluate(PostfixCell[,] allCells)
         {
             string[] cellTokens = CreateCellTokens(_tokens);
 
@@ -65,9 +70,11 @@
                 {
                     currentTokens.Push(operand);
                 }
-                else if (IsCellLink(token))
+                else if (PostfixCellPointer.IsCellPointer(token))
                 {
-                    float? linkedValue = EvaluateCellLink(allCells, token);
+                    var cellPointer = new PostfixCellPointer(_row, _column, token);
+                    
+                    float? linkedValue = cellPointer.GetValue(allCells, token);
 
                     if (linkedValue.HasValue)
                     {
@@ -102,20 +109,28 @@
         }
 
         /// <summary>
-        ///     Returns the value of the cell linked from this token.
-        ///     Returns null if the link could not be found or was circular.
+        /// Does this cell contain tokens that point to the provided row and column?
         /// </summary>
-        private float? EvaluateCellLink(PostfixCell[,] allCells, string currLink)
+        public bool ContainsPointerTo(int row, int column)
         {
-            PostfixCell linkedCell = GetLinkedPostfixCell(allCells, currLink);
+            string[] cellElements = CreateCellTokens(_tokens);
 
-            //Avoid an infinite loop of cells referencing one another.
-            if ((linkedCell == null) || linkedCell.LinksToCell(this, allCells))
+            foreach (string cellElement in cellElements)
             {
-                return null;
+                if (!PostfixCellPointer.IsCellPointer(cellElement))
+                {
+                    continue;
+                }
+                
+                var pointer = new PostfixCellPointer(_row, _column, cellElement);
+
+                if (pointer.PointedRow == row && pointer.PointedColumn == column)
+                {
+                    return true;
+                }
             }
 
-            return linkedCell.Evaluate(allCells);
+            return false;
         }
 
         /// <summary>
@@ -126,91 +141,6 @@
         {
             rawContent = SanitizeRawCellInput(rawContent);
             return rawContent.Split(new[] {_IDEAL_TOKEN_WHITESPACING}, StringSplitOptions.RemoveEmptyEntries);
-        }
-
-        /// <summary>
-        ///     Given a letter, returns an integer representing the index of the letter in the alphabet. Case insensitive.
-        ///     Zero-based.
-        /// </summary>
-        private static int GetColumnIndexFromLetter(char letter)
-        {
-            return char.ToUpper(letter) - 65;
-        }
-
-        /// <summary>
-        ///     Does the provided token attempt to represent a pointer to another cell?
-        /// </summary>
-        private static bool IsCellLink(string cellToken)
-        {
-            if (cellToken.Length <= 0)
-            {
-                return false;
-            }
-
-            string firstChar = cellToken[0].ToString();
-
-            MatchCollection letterMatches = Regex.Matches(firstChar, @"[a-zA-Z]");
-            return letterMatches.Count > 0;
-        }
-
-        /// <summary>
-        ///     Determines the row being pointed to by the provided token.
-        ///     Token is expected to be prevalidated as a numeric cell pointer.
-        /// </summary>
-        private static int GetRowIndex(string cellToken)
-        {
-            int rowIndex;
-
-            if (int.TryParse(cellToken, out rowIndex))
-            {
-                return rowIndex - 1;
-            }
-
-            return -1;
-        }
-
-        /// <summary>
-        ///     Does this cell have a token that points to the specifically provided cell?
-        ///     Uses the array as a basis for determining this.
-        /// </summary>
-        private bool LinksToCell(PostfixCell otherCell, PostfixCell[,] allCells)
-        {
-            string[] cellElements = CreateCellTokens(_tokens);
-
-            foreach (string cellElement in cellElements)
-            {
-                if (!IsCellLink(cellElement))
-                {
-                    continue;
-                }
-
-                PostfixCell linkedCell = GetLinkedPostfixCell(allCells, cellElement);
-
-                if ((linkedCell != null) && (linkedCell == otherCell))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        ///     Returns the cell pointed to by this cell.
-        ///     Input must be a syntactically valid cell link, i.e., a single letter succeeded by a number of arbitrary size.
-        ///     If the cell link points to a nonexistant cell, returns null.
-        /// </summary>
-        private static PostfixCell GetLinkedPostfixCell(PostfixCell[,] allCells, string cellLink)
-        {
-            int column = GetColumnIndexFromLetter(cellLink[0]);
-            int row = GetRowIndex(cellLink.Substring(1));
-
-            int numRows = allCells.GetLength(0);
-            int numCols = allCells.GetLength(1);
-
-            bool linkedCellOutOfRange = (row >= numRows) || (column >= numCols);
-
-            return linkedCellOutOfRange ? null : allCells[row, column];
         }
 
         /// <summary>

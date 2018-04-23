@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PostfixCell.cs" />
+    <Compile Include="PostfixCellPointer.cs" />
     <Compile Include="PostfixSpreadsheetApplication.cs" />
     <Compile Include="PostfixSpreadsheet.cs" />
     <Compile Include="PostfixUtility.cs" />

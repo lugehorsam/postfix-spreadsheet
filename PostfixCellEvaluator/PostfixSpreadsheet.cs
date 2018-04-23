@@ -113,7 +113,7 @@
             {
                 for (var columnIndex = 0; columnIndex < numCols; columnIndex++)
                 {
-                    postfixCells[rowIndex, columnIndex] = new PostfixCell(csvCells[rowIndex, columnIndex]);
+                    postfixCells[rowIndex, columnIndex] = new PostfixCell(rowIndex, columnIndex, csvCells[rowIndex, columnIndex]);
                 }
             }
 
