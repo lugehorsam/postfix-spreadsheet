@@ -126,6 +126,11 @@
             return false;
         }
 
+        /// <summary>
+        ///     Tries to push a cell pointer to the stack of operands.
+        ///     Returns true if the token was recognized as a valid cell pointer and pushed to the stack.
+        ///     Else, returns false.
+        /// </summary>
         private bool TryPushCellPointerToStack(string token, Stack<float> operandStack, PostfixCell[,] allCells)
         {
             if (PostfixCellPointer.IsCellPointer(token))
@@ -143,6 +148,10 @@
             return false;
         }
 
+        /// <summary>
+        ///     Returns true if the token is a valid cell pointer to the provided row and column.
+        ///     Else returns false.
+        /// </summary>
         private bool IsTokenPointerTo(string token, int row, int column)
         {
             if (!PostfixCellPointer.IsCellPointer(token))
