@@ -16,7 +16,7 @@ You should see the appropriate output printed in your console.
 
 From within `PostfixCellEvaluator/Test/`, run the following:
 
-`run-tests.sh`
+`./run-tests.sh`
 
 Ensure that all tests pass. Follow the format outlined in that script to add more tests.
 
