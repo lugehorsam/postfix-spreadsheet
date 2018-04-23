@@ -63,8 +63,16 @@
         {
             PostfixCell linkedCell = GetCellPointedTo(allCells, currLink);
 
-            //Avoid an infinite loop of cells referencing one another.
-            if ((linkedCell == null) || linkedCell.ContainsPointerTo(_row, _column))
+            if (linkedCell == null)
+            {
+                return null;
+            }
+            
+            bool thisPointsToSelf = linkedCell.Row == _pointedRow && linkedCell.Column == _pointedColumn;
+            bool otherPointsToThis = linkedCell.ContainsPointerTo(_row, _column);
+            
+            //Avoid infinite loops
+            if (otherPointsToThis || thisPointsToSelf)
             {
                 return null;
             }

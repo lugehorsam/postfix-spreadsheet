@@ -32,6 +32,16 @@
         private readonly int _row;
         private readonly int _column;
 
+        public int Row
+        {
+            get { return _row; }
+        }
+
+        public int Column
+        {
+            get { return _column; }
+        }
+
         public PostfixCell(int row, int column, string tokens)
         {
             _row = row;
