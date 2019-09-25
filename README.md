@@ -1,5 +1,9 @@
 ## A Reverse Polish Notation evaluator with cell and letter number notation support.
 
+Read about Reverse Polish Notation here: https://en.wikipedia.org/wiki/Reverse_Polish_notation
+
+See the Tests/ folder for examples on how this program expects input and produces output.
+
 ### Running the Application
 
 To develop or run this application, ensure you are on Mac OSX and
